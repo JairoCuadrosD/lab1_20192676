@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo pedido — Restaurante</title>
+    <style>
+        body { font-family: Segoe UI, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #1a5f4a; }
+        .err { color: #b71c1c; font-size: 0.9rem; }
+        section { margin: 1rem 0; border-left: 4px solid #1a5f4a; padding-left: 0.75rem; }
+        label { display: block; margin: 0.35rem 0; }
+        .plato { margin: 0.25rem 0; }
+        button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+<h1>Nuevo pedido</h1>
+<p><small>Ejemplo estudiantil — RestauranteCrearController · /restaurante/nuevo</small></p>
+
+<p class="err" th:if="${errorNegocio}" th:text="${errorNegocio}"></p>
+<ul class="err" th:if="${#fields.hasErrors('*')}">
+    <li th:each="e : ${#fields.errors('*')}" th:text="${e}"></li>
+</ul>
+
+<form th:action="@{/restaurante/pedido}" th:object="${pedidoForm}" method="post">
+    <label>
+        Nombre del cliente *
+        <input type="text" th:field="*{nombreCliente}" placeholder="Ej: María"/>
+    </label>
+
+    <p>Tipo de servicio *</p>
+    <label><input type="radio" th:field="*{tipoServicio}" value="PARA_LLEVAR"/> Para llevar</label>
+    <label><input type="radio" th:field="*{tipoServicio}" value="EN_MESA"/> En mesa</label>
+
+    <h2>Menú (elige uno o más platos)</h2>
+    <section th:each="entry : ${menuAgrupado.entrySet()}">
+        <h3 th:text="${entry.key.etiqueta}">Tipo</h3>
+        <div class="plato" th:each="plato : ${entry.value}">
+            <label>
+                <input type="checkbox" th:field="*{platosIds}" th:value="${plato.id}"/>
+                <span th:text="${plato.nombre}">Plato</span>
+                — S/ <span th:text="${#numbers.formatDecimal(plato.precio, 1, 2)}">0</span>
+                — <span th:text="${plato.minutosPreparacion}">0</span> min
+            </label>
+        </div>
+    </section>
+
+    <button type="submit">Crear pedido</button>
+</form>
+
+<p><a th:href="@{/restaurante/historial}">Ver historial de pedidos</a></p>
+</body>
+</html>

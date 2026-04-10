@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen del pedido</title>
+    <style>
+        body { font-family: Segoe UI, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #1a5f4a; }
+        .ok { background: #e8f5e9; padding: 0.5rem 0.75rem; border-radius: 4px; }
+        table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+        th, td { border: 1px solid #ccc; padding: 0.4rem 0.5rem; text-align: left; }
+        .estado { font-size: 1.1rem; font-weight: bold; color: #0d47a1; }
+        button { padding: 0.45rem 0.9rem; cursor: pointer; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+<h1>Pedido #<span th:text="${pedido.id}">0</span></h1>
+<p><small>RestaurantePedidoController · resumen</small></p>
+
+<p class="ok" th:if="${mensajeExito}" th:text="${mensajeExito}"></p>
+
+<p>Cliente: <strong th:text="${pedido.nombreCliente}">—</strong></p>
+<p>Servicio:
+    <strong th:text="${pedido.tipoServicio == 'PARA_LLEVAR' ? 'Para llevar' : 'En mesa'}">—</strong>
+</p>
+
+<p class="estado">Estado: <span th:text="${pedido.estado.etiqueta}">—</span></p>
+
+<p>Tiempo estimado total: <strong th:text="${pedido.tiempoTotalMinutos}">0</strong> minutos</p>
+<p>Precio total: S/ <strong th:text="${#numbers.formatDecimal(pedido.precioTotal, 1, 2)}">0</strong></p>
+
+<h2>Platos</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Plato</th>
+        <th>Precio</th>
+        <th>Min</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="plato : ${pedido.platos}">
+        <td th:text="${plato.nombre}"></td>
+        <td th:text="${#numbers.formatDecimal(plato.precio, 1, 2)}"></td>
+        <td th:text="${plato.minutosPreparacion}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<form th:if="${pedido.estado.name() != 'ENTREGADO'}"
+      th:action="@{/restaurante/pedido/{id}/avanzar(id=${pedido.id})}"
+      method="post">
+    <button type="submit">Avanzar estado (siguiente paso)</button>
+</form>
+
+<p th:if="${pedido.estado.name() == 'ENTREGADO'}">Este pedido ya fue entregado.</p>
+
+<p><a th:href="@{/restaurante/nuevo}">Nuevo pedido</a> ·
+   <a th:href="@{/restaurante/historial}">Historial</a></p>
+</body>
+</html>

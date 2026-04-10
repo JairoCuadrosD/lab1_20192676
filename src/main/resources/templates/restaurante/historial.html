@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de pedidos</title>
+    <style>
+        body { font-family: Segoe UI, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #1a5f4a; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.45rem 0.5rem; text-align: left; }
+        tr:nth-child(even) { background: #f5f5f5; }
+        a { color: #1565c0; }
+    </style>
+</head>
+<body>
+<h1>Historial de pedidos</h1>
+<p><small>RestaurantePedidoController · /restaurante/historial</small></p>
+
+<p th:if="${#lists.isEmpty(pedidos)}">Todavía no hay pedidos. <a th:href="@{/restaurante/nuevo}">Crear el primero</a></p>
+
+<table th:if="${!#lists.isEmpty(pedidos)}">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Cliente</th>
+        <th>Servicio</th>
+        <th>Estado</th>
+        <th>Tiempo (min)</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${pedidos}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.nombreCliente}"></td>
+        <td th:text="${p.tipoServicio == 'PARA_LLEVAR' ? 'Para llevar' : 'En mesa'}"></td>
+        <td th:text="${p.estado.etiqueta}"></td>
+        <td th:text="${p.tiempoTotalMinutos}"></td>
+        <td><a th:href="@{/restaurante/pedido/{id}(id=${p.id})}">Ver</a></td>
+    </tr>
+    </tbody>
+</table>
+
+<p><a th:href="@{/restaurante/nuevo}">Nuevo pedido</a></p>
+</body>
+</html>
